@@ -1,7 +1,8 @@
 import { withStyles } from "@material-ui/core/styles";
 import PropTypes from "prop-types";
-import React from "react";
+import React, { useState } from "react";
 import Button from "../components/Button";
+import SimpleDialog from "../components/SimpleDialog";
 import Typography from "../components/Typography";
 import backgroundImage from "../images/background-image.jpg";
 import ProductHeroLayout from "./ProductHeroLayout";
@@ -32,9 +33,25 @@ const styles = (theme) => ({
 
 function ProductHero(props) {
   const { classes } = props;
+  const [photo, setPhoto] = useState();
+  const [open, setOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState();
+
+  const handleClose = (value) => {
+    setOpen(false);
+    setSelectedValue(value);
+  };
+
+  const reader = new FileReader();
+
+  reader.onload = (e) => {
+    setPhoto(e.target.result);
+    setOpen(true);
+  };
 
   const uploadPhoto = (event) => {
-    console.log(event.target.files[0]);
+    const newPhoto = event.target.files[0];
+    reader.readAsDataURL(newPhoto);
   };
 
   return (
@@ -77,6 +94,12 @@ function ProductHero(props) {
       <Typography variant="body2" color="inherit" className={classes.more}>
         Discover the experience
       </Typography>
+      <SimpleDialog
+        selectedValue={selectedValue}
+        open={open}
+        onClose={handleClose}
+        photoImage={photo}
+      />
     </ProductHeroLayout>
   );
 }
